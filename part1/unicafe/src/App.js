@@ -5,6 +5,15 @@ const Button = ({ handleClick, text }) => (
 );
 
 const Statistics = ({ good, bad, neutral }) => {
+    if (good === 0 && bad === 0 && neutral === 0) {
+        return (
+            <div>
+                <h2>Statistics</h2>
+                <p>No feedback given</p>
+            </div>
+        );
+    }
+
     const total = good + bad + neutral;
     const average = (good * 1 + bad * -1) / total || 0;
     const posFeedback = (good / total) * 100 || 0;
