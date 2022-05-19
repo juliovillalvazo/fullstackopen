@@ -5,9 +5,12 @@ const Button = ({ handleClick, text }) => (
 );
 
 const StatisticsLine = ({ text, value }) => (
-    <p>
-        {text} {value} {text === 'positive' ? '%' : ' '}
-    </p>
+    <tr>
+        <td>{text}</td>
+        <td>
+            {value} {text === 'positive' ? '%' : ' '}
+        </td>
+    </tr>
 );
 
 const Statistics = ({ good, bad, neutral }) => {
@@ -24,14 +27,21 @@ const Statistics = ({ good, bad, neutral }) => {
     const average = (good * 1 + bad * -1) / total || 0;
     const posFeedback = (good / total) * 100 || 0;
     return (
-        <div>
-            <StatisticsLine text="good" value={good} />
-            <StatisticsLine text="neutral" value={neutral} />
-            <StatisticsLine text="bad" value={bad} />
-            <StatisticsLine text="all" value={total} />
-            <StatisticsLine text="average" value={average} />
-            <StatisticsLine text="positive" value={posFeedback} />
-        </div>
+        <table>
+            <tbody>
+                <StatisticsLine text="good" value={good} />
+
+                <StatisticsLine text="neutral" value={neutral} />
+
+                <StatisticsLine text="bad" value={bad} />
+
+                <StatisticsLine text="all" value={total} />
+
+                <StatisticsLine text="average" value={average} />
+
+                <StatisticsLine text="positive" value={posFeedback} />
+            </tbody>
+        </table>
     );
 };
 
