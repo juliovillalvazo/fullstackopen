@@ -1,18 +1,15 @@
-const Hello = ({ name, age }) => {
-    const bornYear = () => new Date().getFullYear() - age;
+import { useState } from 'react';
+
+const App = () => {
+    const [counter, setCounter] = useState(0);
+
     return (
         <div>
-            <p>
-                Hello {name}, you are {age} years old
-            </p>
-            <p>So you were probably born in {bornYear()}</p>
+            {counter}
+            <button onClick={() => setCounter(counter + 1)}>plus</button>
+            <button onClick={() => setCounter(0)}>reset</button>
         </div>
     );
-};
-
-const App = (props) => {
-    const { counter } = props;
-    return <div>{counter}</div>;
 };
 
 export default App;
