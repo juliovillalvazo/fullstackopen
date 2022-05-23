@@ -9,31 +9,69 @@ const randomAnecdote = (anecdotes) => {
     return anecdotes[randNumber];
 };
 
-const Anecdote = ({ selected }) => {
+const Anecdote = ({ selected, title }) => {
     if (!selected) {
-        return (
-            <div>
-                <p>Start by pressing the next anecdote Button!!</p>
-            </div>
-        );
+        return <p>Start by pressing the next anecdote Button!!</p>;
     }
-    return <p>{selected}</p>;
+    return (
+        <div>
+            <h2>{title}</h2>
+            <p>{selected}</p>
+        </div>
+    );
 };
 
-const DisplayVotes = ({ votes, selected }) => {
-    console.log(votes, selected);
+const DisplayVotes = ({ votes, selected, anecdotes }) => {
     if (!selected) return <></>;
-    return <p>has {votes[selected] || 0} votes</p>;
+    const index = anecdotes.indexOf(selected);
+    return <p>has {votes[index] || 0} votes</p>;
 };
 
-const voteSelection = (votes, selected) => {
-    const obj = { ...votes };
-    if (obj[selected]) {
-        obj[selected] = obj[selected] + 1;
-        return obj;
+const votingIncrease = (votes, selected, anecdotes) => {
+    let updated = {};
+    let index = anecdotes.indexOf(selected);
+    if (votes[index]) {
+        updated[index] = votes[index] + 1;
+        return {
+            ...votes,
+            ...updated,
+        };
     }
-    obj[selected] = 1;
-    return obj;
+    updated[index] = 1;
+    return {
+        ...votes,
+        ...updated,
+    };
+};
+
+const MaxVoted = ({ votes, anecdotes }) => {
+    let mostVoted = getMostVoted(votes, anecdotes);
+    return (
+        <div>
+            {(mostVoted || <></>) && (
+                <Anecdote
+                    selected={mostVoted}
+                    title={'Anecdote with most votes'}
+                />
+            )}
+            {(mostVoted || <></>) && (
+                <DisplayVotes
+                    votes={votes}
+                    selected={mostVoted}
+                    anecdotes={anecdotes}
+                />
+            )}
+        </div>
+    );
+};
+
+const getMostVoted = (votes, anecdotes) => {
+    if (Object.values(votes).length) {
+        let mostVotes = Number(Math.max(...Object.values(votes)));
+        let index = Object.keys(votes).find((el) => votes[el] === mostVotes);
+        return anecdotes[index];
+    }
+    return 0;
 };
 
 const App = () => {
@@ -47,21 +85,28 @@ const App = () => {
         'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients',
     ];
 
-    const [selected, setSelected] = useState(0);
-    const [votes, setVotes] = useState({});
+    let [selected, setSelected] = useState(0);
+    let [votes, setVotes] = useState(0);
 
     return (
         <div>
-            <Anecdote selected={selected} />
-            <DisplayVotes votes={votes} selected={selected} />
+            <Anecdote selected={selected} title={'Anecdote of the day'} />
+            <DisplayVotes
+                votes={votes}
+                selected={selected}
+                anecdotes={anecdotes}
+            />
             <Button
                 handleClick={() => setSelected(randomAnecdote(anecdotes))}
                 text="next anecdote"
             />
             <Button
-                handleClick={() => setVotes(voteSelection(votes, selected))}
+                handleClick={() =>
+                    setVotes(votingIncrease(votes, selected, anecdotes))
+                }
                 text="vote"
             />
+            <MaxVoted votes={votes} anecdotes={anecdotes} />
         </div>
     );
 };
