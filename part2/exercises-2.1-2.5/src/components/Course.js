@@ -6,6 +6,14 @@ const Part = ({ name, exercises }) => (
     </li>
 );
 
+const Total = ({ parts }) => (
+    <p>
+        <strong>
+            total of {parts.reduce((prev, cur) => prev + cur.exercises, 0)}{' '}
+            exercises
+        </strong>
+    </p>
+);
 const Course = ({ course }) => {
     return (
         <div key={course.id}>
@@ -21,6 +29,7 @@ const Course = ({ course }) => {
                     );
                 })}
             </ul>
+            <Total parts={course.parts} />
         </div>
     );
 };
