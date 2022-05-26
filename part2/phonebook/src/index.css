@@ -1,0 +1,21 @@
+.success {
+    border: 2px solid green;
+    font-size: 20px;
+    background-color: papayawhip;
+    color: green;
+    letter-spacing: 3px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.error {
+    border: 2px solid red;
+    font-size: 20px;
+    background-color: papayawhip;
+    color: red;
+    letter-spacing: 3px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}

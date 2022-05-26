@@ -3,12 +3,15 @@ import Numbers from './components/Numbers';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import numbersService from './services/numbersService';
+import Notification from './components/Notification';
 
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState('');
     const [newPhone, setNewPhone] = useState('');
     const [filter, setFilter] = useState('');
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     const hook = () => {
         numbersService.getAll().then((all) => {
@@ -20,11 +23,6 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault();
-        // const checkPersonNamePhone = persons.find((person) => person.name === newName && person.number !== newPhone);
-        // const checkPersonName = persons.find(
-        //     (person) => person.name === newName
-        // );
-
         const checkExistingPerson = persons.find(
             (person) => person.name === newName
         );
@@ -41,13 +39,44 @@ const App = () => {
                     number: newPhone,
                 };
 
-                numbersService.update(id, updatedInfo).then((response) => {
-                    if (response) {
+                numbersService
+                    .update(id, updatedInfo)
+                    .then((response) => {
+                        if (response) {
+                            numbersService
+                                .getAll()
+                                .then((response) => setPersons(response));
+                            setMessage(
+                                `Modified ${checkExistingPerson.name} phone number`
+                            );
+
+                            setMessageType('success');
+
+                            setTimeout(() => {
+                                setMessage(null);
+                                setMessageType(null);
+                            }, 5000);
+                        }
+                    })
+                    .catch((error) => {
+                        setMessage(
+                            `Information of ${checkExistingPerson.name} has already been removed from server`
+                        );
+
+                        setMessageType('error');
+
                         numbersService
                             .getAll()
                             .then((response) => setPersons(response));
-                    }
-                });
+
+                        setNewName('');
+                        setNewPhone('');
+
+                        setTimeout(() => {
+                            setMessage(null);
+                            setMessageType(null);
+                        }, 5000);
+                    });
             }
         } else {
             const newPerson = {
@@ -59,6 +88,15 @@ const App = () => {
                 setPersons(persons.concat(newPerson));
                 setNewName('');
                 setNewPhone('');
+
+                setMessage(`Added ${newPerson.name}`);
+
+                setMessageType('success');
+
+                setTimeout(() => {
+                    setMessage(null);
+                    setMessageType(null);
+                }, 5000);
             });
         }
     };
@@ -83,27 +121,50 @@ const App = () => {
 
     const deleteHandler = (event) => {
         const id = Number(event.target.id);
-        const queryDelete = window.confirm(
-            `Delete ${persons.find((person) => person.id === id).name} ?`
-        );
+        const personToDelete = persons.find((person) => person.id === id).name;
+        const queryDelete = window.confirm(`Delete ${personToDelete} ?`);
         if (queryDelete) {
             const filteredPersons = persons.filter(
                 (person) => person.id !== id
             );
 
-            numbersService.deleteMethod(id).then((response) => {
-                if (response.status === 200) {
-                    setPersons(filteredPersons);
-                } else {
-                    return response;
-                }
-            });
+            numbersService
+                .deleteMethod(id)
+                .then((response) => {
+                    if (response.status === 200) {
+                        setPersons(filteredPersons);
+
+                        setMessage(`Deleted ${personToDelete}`);
+
+                        setMessageType('success');
+
+                        setTimeout(() => {
+                            setMessage(null);
+                            setMessageType(null);
+                        }, 5000);
+                    } else {
+                        return response;
+                    }
+                })
+                .catch((error) => {
+                    setMessage(
+                        `Information of ${personToDelete} has already been removed from server`
+                    );
+
+                    setMessageType('error');
+
+                    setTimeout(() => {
+                        setMessage(null);
+                        setMessageType(null);
+                    }, 5000);
+                });
         }
     };
 
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={message} type={messageType} />
             <Filter filter={filter} handler={handleFilter} />
             <h3>Add a new</h3>
             <PersonForm
