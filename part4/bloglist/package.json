@@ -1,0 +1,30 @@
+{
+    "name": "bloglist",
+    "version": "1.0.0",
+    "description": "blog list application",
+    "main": "index.js",
+    "scripts": {
+        "start": "cross-env NODE_ENV=production node index.js",
+        "dev": "cross-env NODE_ENV=development nodemon --trace-warnings index.js",
+        "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit"
+    },
+    "author": "julio vc",
+    "license": "MIT",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "cors": "^2.8.5",
+        "cross-env": "^7.0.3",
+        "dotenv": "^16.0.1",
+        "express": "^4.18.1",
+        "express-async-errors": "^3.1.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.3.5"
+    },
+    "devDependencies": {
+        "jest": "^28.1.0",
+        "supertest": "^6.2.3"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    }
+}
