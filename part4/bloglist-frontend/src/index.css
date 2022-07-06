@@ -17,3 +17,34 @@
     font-size: 21px;
     height: 60px;
 }
+
+.red {
+    background-color: crimson;
+    border: 2px solid crimson;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.4s;
+    color: white;
+}
+
+.btn {
+    background-color: darkorange;
+    border: 2px solid darkorange;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: all 0.4s;
+    color: white;
+}
+
+.btn:hover,
+.red:hover {
+    cursor: pointer;
+    box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.4);
+    color: black;
+    transform: translateY(-2px);
+}
+
+.btn:active,
+.red:active {
+    transform: translateY(0);
+}

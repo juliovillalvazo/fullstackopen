@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/loginService';
 import Button from './components/Button';
 import AddBlogs from './components/AddBlogs';
 import Notification from './components/Notification';
+import Toggleable from './components/Toggleable';
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [url, setUrl] = useState('');
+
     const [message, setMessage] = useState(null);
     const [type, setType] = useState('');
+
+    const blogFormRef = useRef();
 
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -83,7 +84,7 @@ const App = () => {
                     onChange={({ target }) => setPassword(target.value)}
                 />
             </div>
-            <button type="submit">login</button>
+            <Button type="submit" value="login" />
         </form>
     );
 
@@ -93,19 +94,10 @@ const App = () => {
         setUser(null);
     };
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
-
+    const createBlog = async (blogObject) => {
         try {
-            const createdBlog = await blogService.create({
-                author,
-                url,
-                title,
-            });
-
-            setAuthor('');
-            setUrl('');
-            setTitle('');
+            blogFormRef.current.toggleVisibility();
+            const createdBlog = await blogService.create(blogObject);
 
             const reloadBlogs = await blogService.getAll();
 
@@ -129,6 +121,35 @@ const App = () => {
         }
     };
 
+    const handleLikes = async (id, updatedBlog) => {
+        await blogService.update(id, updatedBlog);
+
+        const updatedBlogs = await blogService.getAll();
+
+        setBlogs(updatedBlogs);
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await blogService.remove(id);
+            setMessage('Successfully removed blog post');
+            setType('success');
+            const updatedBlogs = await blogService.getAll();
+            setBlogs(updatedBlogs);
+            setTimeout(() => {
+                setMessage(null);
+                setType(null);
+            }, 3000);
+        } catch (error) {
+            setMessage(error.message);
+            setType('error');
+            setTimeout(() => {
+                setMessage(null);
+                setType(null);
+            }, 3000);
+        }
+    };
+
     const seeBlogs = () => (
         <div>
             <p>
@@ -136,20 +157,25 @@ const App = () => {
                 <Button handler={logoutHandler} value="logout" />
             </p>
 
-            <AddBlogs
-                submitHandler={submitHandler}
-                author={author}
-                setAuthor={setAuthor}
-                title={title}
-                setTitle={setTitle}
-                url={url}
-                setUrl={setUrl}
-                id="first"
-            />
+            <Toggleable
+                buttonLabel="create new"
+                hideButtonLabel="cancel"
+                ref={blogFormRef}
+            >
+                <AddBlogs createBlog={createBlog} id="first" />
+            </Toggleable>
 
-            {blogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} />
-            ))}
+            {blogs
+                .sort((a, b) => b.likes - a.likes)
+                .map((blog) => (
+                    <Blog
+                        key={blog.id}
+                        blog={blog}
+                        handleLikes={handleLikes}
+                        user={user}
+                        handleDelete={handleDelete}
+                    />
+                ))}
         </div>
     );
 
