@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Button from './Button';
 
-const Blog = ({ blog, handleLikes, user, handleDelete }) => {
+const Blog = ({ blog, handleLikes, handleDelete, user }) => {
     const [showDetails, setShowDetails] = useState(false);
 
     const blogStyle = {
@@ -33,7 +33,7 @@ const Blog = ({ blog, handleLikes, user, handleDelete }) => {
     };
 
     return (
-        <div style={blogStyle}>
+        <div style={blogStyle} className="blog">
             {showDetails ? (
                 <div>
                     {blog.title} {blog.author}{' '}
@@ -44,14 +44,19 @@ const Blog = ({ blog, handleLikes, user, handleDelete }) => {
                         }}
                     />
                     <p>{blog.url}</p>
-                    <p>
+                    <p id="likes-count">
                         {blog.likes}{' '}
-                        <Button value="like" handler={likesHelper} />
+                        <Button
+                            id="likes-button"
+                            value="like"
+                            handler={likesHelper}
+                        />
                     </p>
                     <p>{blog.user?.name}</p>
                     {blog.user?.name === user.name ? (
                         <div>
                             <Button
+                                id="remove-btn"
                                 type="red"
                                 value="remove"
                                 handler={removeHelper}
@@ -65,6 +70,7 @@ const Blog = ({ blog, handleLikes, user, handleDelete }) => {
                 <div>
                     {blog.title} {blog.author}{' '}
                     <Button
+                        id="show-details"
                         value="show"
                         handler={() => {
                             setShowDetails(true);
