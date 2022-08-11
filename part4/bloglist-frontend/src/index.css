@@ -31,7 +31,7 @@
     background-color: darkorange;
     border: 2px solid darkorange;
     border-radius: 10px;
-    margin-bottom: 10px;
+    /* margin-bottom: auto; */
     transition: all 0.4s;
     color: white;
 }
@@ -47,4 +47,8 @@
 .btn:active,
 .red:active {
     transform: translateY(0);
+}
+
+.smallpadding {
+    padding: 5px;
 }

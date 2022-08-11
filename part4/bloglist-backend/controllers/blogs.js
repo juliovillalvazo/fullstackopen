@@ -46,7 +46,21 @@ blogsRouter.post('/', async (request, response) => {
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
 
+    await savedBlog.populate('user');
+
     response.json(savedBlog);
+});
+
+blogsRouter.put('/:id/comments', async (req, res) => {
+    const { user, title, author, url, likes, comments } = req.body;
+
+    const updatedBlog = await Blog.findByIdAndUpdate(
+        req.params.id,
+        { user, title, author, url, likes, comments },
+        { new: true, runValidators: true, context: 'query' }
+    );
+
+    res.json(updatedBlog);
 });
 
 blogsRouter.put('/:id', async (req, res) => {
